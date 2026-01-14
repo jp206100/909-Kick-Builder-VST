@@ -1,0 +1,105 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Xcode
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/project.xcworkspace/
+*.xcworkspace/contents.xcworkspacedata
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Build directories
+Builds/
+build/
+Build/
+cmake-build-*/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+
+# JUCE generated files
+JuceLibraryCode/
+BinaryData/
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Compiled binaries
+*.o
+*.obj
+*.exe
+*.out
+*.app
+*.dylib
+*.so
+*.dll
+*.a
+*.lib
+
+# VST3 builds (don't track built plugins)
+*.vst3
+
+# User files
+*.user
+*.suo
+*.sdf
+*.opensdf
+*.db
+
+# Logs
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Package files
+*.zip
+*.tar.gz
+*.rar
+
+# User presets (optional - you might want to track example presets)
+# Assets/Presets/User/
+
+# macOS plugin install locations (don't track)
+~/Library/Audio/Plug-Ins/
+
+# Documentation builds
+docs/build/
+docs/_build/
+
+# Test files
+*.test
+test_output/
+JUCE/
