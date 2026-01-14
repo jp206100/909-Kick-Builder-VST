@@ -102,4 +102,3 @@ docs/_build/
 # Test files
 *.test
 test_output/
-JUCE/
