@@ -273,7 +273,7 @@ void NineZeroNineAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     processMIDI(midiMessages);
 
     // Generate audio from active engine
-    const int engineMode = apvts.getRawParameterValue("engine_mode")->load();
+    const int engineMode = static_cast<int>(apvts.getRawParameterValue("engine_mode")->load());
 
     if (engineMode == 0) // Sample mode
     {
@@ -339,7 +339,7 @@ void NineZeroNineAudioProcessor::processMIDI(juce::MidiBuffer& midiMessages)
 
 void NineZeroNineAudioProcessor::triggerKick(int velocity)
 {
-    const int engineMode = apvts.getRawParameterValue("engine_mode")->load();
+    const int engineMode = static_cast<int>(apvts.getRawParameterValue("engine_mode")->load());
 
     if (engineMode == 0) // Sample mode
     {
@@ -366,7 +366,7 @@ void NineZeroNineAudioProcessor::updateParameters()
     adsrEnvelope->setRelease(apvts.getRawParameterValue("release")->load());
 
     // Update Sample Engine
-    const int sampleID = apvts.getRawParameterValue("sample_select")->load();
+    const int sampleID = static_cast<int>(apvts.getRawParameterValue("sample_select")->load());
     sampleEngine->setCurrentSample(static_cast<Constants::SampleID>(sampleID));
 
     // Update Transient Shaper

@@ -106,8 +106,8 @@ private:
     // Audio buffers for visualization
     juce::AudioBuffer<float> waveformBuffer;
     juce::AudioBuffer<float> fftBuffer;
-    juce::SpinLock waveformLock;
-    juce::SpinLock fftLock;
+    juce::CriticalSection waveformLock;
+    juce::CriticalSection fftLock;
 
     // Metering
     std::atomic<float> currentOutputLevel { 0.0f };
