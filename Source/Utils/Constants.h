@@ -131,23 +131,61 @@ namespace Constants
         constexpr float SYNTH_PITCH_ENV_TIME_DEFAULT = 50.0f; // ms
     }
 
-    // UI Colors (Futuristic Apple aesthetic)
+    // UI Colors (Vintage TR-909 Hardware aesthetic)
     namespace Colors
     {
-        const juce::Colour BACKGROUND { 0xFF0A0A0A };           // Deep black
-        const juce::Colour PANEL { 0x40FFFFFF };                // Frosted glass
-        const juce::Colour ACCENT_BLUE { 0xFF0A84FF };          // Electric blue
-        const juce::Colour ACCENT_GREEN { 0xFF32D74B };         // Neon green
-        const juce::Colour TEXT_PRIMARY { 0xFFFFFFFF };         // White
-        const juce::Colour TEXT_SECONDARY { 0xFFE5E5E7 };       // Light gray
-        const juce::Colour KNOB_TRACK { 0x40FFFFFF };           // Knob track
-        const juce::Colour KNOB_FILL { 0xFF0A84FF };            // Knob fill (blue)
-        const juce::Colour METER_GREEN { 0xFF32D74B };          // Meter green
-        const juce::Colour METER_YELLOW { 0xFFFFD60A };         // Meter yellow
-        const juce::Colour METER_RED { 0xFFFF453A };            // Meter red
-        const juce::Colour WAVEFORM { 0xFF0A84FF };             // Waveform color
-        const juce::Colour SPECTRUM_START { 0xFF0A84FF };       // Spectrum gradient start
-        const juce::Colour SPECTRUM_END { 0xFF32D74B };         // Spectrum gradient end
+        // Panel and background colors (inspired by TR-909 hardware)
+        const juce::Colour PANEL_DARK_GRAY { 0xFF2B2B2B };      // Dark gunmetal panel
+        const juce::Colour PANEL_MEDIUM_GRAY { 0xFF3A3A3A };    // Medium panel shade
+        const juce::Colour PANEL_LIGHT_GRAY { 0xFF4A4A4A };     // Light panel accent
+        const juce::Colour BACKGROUND { 0xFF1A1A1A };           // Deep black background
+
+        // Metal textures and accents
+        const juce::Colour METAL_HIGHLIGHT { 0xFF5A5A5A };      // Brushed metal highlight
+        const juce::Colour METAL_SHADOW { 0xFF0F0F0F };         // Deep shadow for depth
+        const juce::Colour SCREW_HEAD { 0xFF888888 };           // Panel screw details
+
+        // Classic Roland red accent
+        const juce::Colour ROLAND_RED { 0xFFCC0000 };           // Iconic Roland red
+        const juce::Colour ROLAND_RED_DARK { 0xFF990000 };      // Dark red shadow
+        const juce::Colour ROLAND_RED_LIGHT { 0xFFFF3333 };     // Bright red highlight
+
+        // LED colors
+        const juce::Colour LED_OFF { 0xFF330000 };              // Dark red when off
+        const juce::Colour LED_ON { 0xFFFF0000 };               // Bright red when on
+        const juce::Colour LED_GREEN_OFF { 0xFF003300 };        // Dark green when off
+        const juce::Colour LED_GREEN_ON { 0xFF00FF00 };         // Bright green when on
+
+        // Text and labels (vintage stencil style)
+        const juce::Colour TEXT_PRIMARY { 0xFFE8E8E8 };         // Off-white text
+        const juce::Colour TEXT_SECONDARY { 0xFFB0B0B0 };       // Dim gray text
+        const juce::Colour TEXT_STENCIL { 0xFFD0D0D0 };         // Stencil label color
+        const juce::Colour TEXT_ENGRAVED { 0xFF808080 };        // Engraved text effect
+
+        // Knob colors (vintage potentiometer style)
+        const juce::Colour KNOB_BODY { 0xFF1C1C1C };            // Black knob body
+        const juce::Colour KNOB_HIGHLIGHT { 0xFF404040 };       // Top knob highlight
+        const juce::Colour KNOB_SHADOW { 0xFF0A0A0A };          // Bottom shadow
+        const juce::Colour KNOB_POINTER { 0xFFFFFFFF };         // White position indicator
+        const juce::Colour KNOB_GRIP { 0xFF303030 };            // Grip texture
+        const juce::Colour KNOB_TRACK { 0xFF252525 };           // Track background
+
+        // Vintage screen colors (CRT oscilloscope style)
+        const juce::Colour CRT_BACKGROUND { 0xFF0A1410 };       // Dark greenish CRT
+        const juce::Colour CRT_PHOSPHOR { 0xFF00FF66 };         // Bright phosphor green
+        const juce::Colour CRT_GLOW { 0x8000FF66 };             // Glow around trace
+        const juce::Colour CRT_GRID { 0x40003322 };             // Subtle grid lines
+
+        // Meter colors
+        const juce::Colour METER_GREEN { 0xFF00CC44 };          // VU meter green
+        const juce::Colour METER_YELLOW { 0xFFFFDD00 };         // VU meter yellow
+        const juce::Colour METER_RED { 0xFFFF0000 };            // VU meter red
+        const juce::Colour METER_BACKGROUND { 0xFF0F0F0F };     // Meter background
+
+        // Button colors
+        const juce::Colour BUTTON_UP { 0xFF3A3A3A };            // Button up state
+        const juce::Colour BUTTON_DOWN { 0xFF2A2A2A };          // Button pressed
+        const juce::Colour BUTTON_HIGHLIGHT { 0xFF4F4F4F };     // Button edge highlight
     }
 
     // UI Dimensions
