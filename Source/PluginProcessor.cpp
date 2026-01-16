@@ -138,6 +138,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout NineZeroNineAudioProcessor::
     layout.add(std::make_unique<juce::AudioParameterFloat>(
         "output_gain", "Output Gain",
         OUTPUT_GAIN_MIN, OUTPUT_GAIN_MAX, OUTPUT_GAIN_DEFAULT));
+    layout.add(std::make_unique<juce::AudioParameterBool>("mono_output", "Mono Output", false));
 
     return layout;
 }
@@ -341,6 +342,19 @@ void NineZeroNineAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     const float outputGain = juce::Decibels::decibelsToGain(
         apvts.getRawParameterValue("output_gain")->load());
     buffer.applyGain(outputGain);
+
+    // Apply mono output if enabled
+    const bool monoOutput = apvts.getRawParameterValue("mono_output")->load() > 0.5f;
+    if (monoOutput && buffer.getNumChannels() >= 2)
+    {
+        // Sum stereo to mono
+        for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
+        {
+            const float monoSample = (buffer.getSample(0, sample) + buffer.getSample(1, sample)) * 0.5f;
+            buffer.setSample(0, sample, monoSample);
+            buffer.setSample(1, sample, monoSample);
+        }
+    }
 
     // Update metering
     currentOutputLevel.store(DSPHelpers::getPeakLevel(buffer));

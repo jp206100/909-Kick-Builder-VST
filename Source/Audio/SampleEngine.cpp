@@ -74,6 +74,7 @@ void SampleEngine::renderNextBlock(juce::AudioBuffer<float>& buffer, int startSa
 
     const auto& currentSample = samples[static_cast<size_t>(currentSampleID)];
     const int sampleLength = currentSample.getNumSamples();
+    const int fadeInSamples = 64; // Short fade-in to prevent clicks
 
     for (int i = 0; i < numSamples; ++i)
     {
@@ -83,7 +84,14 @@ void SampleEngine::renderNextBlock(juce::AudioBuffer<float>& buffer, int startSa
             break;
         }
 
-        const float sample = currentSample.getSample(0, playbackPosition) * velocity;
+        float sample = currentSample.getSample(0, playbackPosition) * velocity;
+
+        // Apply short fade-in to prevent clicks at the start
+        if (playbackPosition < fadeInSamples)
+        {
+            const float fadeGain = static_cast<float>(playbackPosition) / static_cast<float>(fadeInSamples);
+            sample *= fadeGain;
+        }
 
         for (int ch = 0; ch < buffer.getNumChannels(); ++ch)
         {

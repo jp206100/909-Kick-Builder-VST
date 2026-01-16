@@ -29,6 +29,7 @@ void ADSREnvelope::prepare(double newSampleRate)
 
 void ADSREnvelope::trigger()
 {
+    adsr.setParameters(params);
     adsr.noteOn();
 }
 
@@ -50,23 +51,19 @@ bool ADSREnvelope::isActive() const
 void ADSREnvelope::setAttack(float milliseconds)
 {
     params.attack = milliseconds / 1000.0f;
-    adsr.setParameters(params);
 }
 
 void ADSREnvelope::setDecay(float milliseconds)
 {
     params.decay = milliseconds / 1000.0f;
-    adsr.setParameters(params);
 }
 
 void ADSREnvelope::setSustain(float level)
 {
     params.sustain = juce::jlimit(0.0f, 1.0f, level);
-    adsr.setParameters(params);
 }
 
 void ADSREnvelope::setRelease(float milliseconds)
 {
     params.release = milliseconds / 1000.0f;
-    adsr.setParameters(params);
 }
