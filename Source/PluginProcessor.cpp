@@ -269,23 +269,55 @@ void NineZeroNineAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     // Update parameters from APVTS
     updateParameters();
 
-    // Process MIDI
-    processMIDI(midiMessages);
-
-    // Generate audio from active engine
+    // Get engine mode once
     const int engineMode = static_cast<int>(apvts.getRawParameterValue("engine_mode")->load());
 
-    if (engineMode == 0) // Sample mode
+    // Process MIDI events with sample-accurate timing
+    int currentSamplePosition = 0;
+
+    for (const auto metadata : midiMessages)
     {
-        sampleEngine->renderNextBlock(buffer, 0, buffer.getNumSamples());
-    }
-    else // Synthesis mode
-    {
-        synthEngine->renderNextBlock(buffer, 0, buffer.getNumSamples());
+        const auto message = metadata.getMessage();
+        const int messagePosition = metadata.samplePosition;
+
+        // Render audio up to this MIDI event
+        if (messagePosition > currentSamplePosition)
+        {
+            const int numSamplesToRender = messagePosition - currentSamplePosition;
+
+            if (engineMode == 0) // Sample mode
+            {
+                sampleEngine->renderNextBlock(buffer, currentSamplePosition, numSamplesToRender);
+            }
+            else // Synthesis mode
+            {
+                synthEngine->renderNextBlock(buffer, currentSamplePosition, numSamplesToRender);
+            }
+
+            currentSamplePosition = messagePosition;
+        }
+
+        // Process the MIDI event at its correct position
+        if (message.isNoteOn())
+        {
+            triggerKick(message.getVelocity());
+        }
     }
 
-    // Trigger sub generator if needed
-    // (This is simplified - should be triggered alongside main kick)
+    // Render any remaining audio after the last MIDI event
+    if (currentSamplePosition < buffer.getNumSamples())
+    {
+        const int numSamplesToRender = buffer.getNumSamples() - currentSamplePosition;
+
+        if (engineMode == 0) // Sample mode
+        {
+            sampleEngine->renderNextBlock(buffer, currentSamplePosition, numSamplesToRender);
+        }
+        else // Synthesis mode
+        {
+            synthEngine->renderNextBlock(buffer, currentSamplePosition, numSamplesToRender);
+        }
+    }
 
     // Apply ADSR envelope
     for (int channel = 0; channel < buffer.getNumChannels(); ++channel)
@@ -324,18 +356,6 @@ void NineZeroNineAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     }
 }
 
-void NineZeroNineAudioProcessor::processMIDI(juce::MidiBuffer& midiMessages)
-{
-    for (const auto metadata : midiMessages)
-    {
-        const auto message = metadata.getMessage();
-
-        if (message.isNoteOn())
-        {
-            triggerKick(message.getVelocity());
-        }
-    }
-}
 
 void NineZeroNineAudioProcessor::triggerKick(int velocity)
 {

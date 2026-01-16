@@ -120,7 +120,6 @@ private:
     double currentSampleRate = 44100.0;
 
     // Helper methods
-    void processMIDI(juce::MidiBuffer& midiMessages);
     void triggerKick(int velocity);
     void updateParameters();
 
