@@ -2,6 +2,7 @@
   ==============================================================================
 
     WaveformDisplay.cpp
+    Vintage CRT oscilloscope-style waveform display with phosphor glow
 
   ==============================================================================
 */
@@ -20,33 +21,138 @@ WaveformDisplay::~WaveformDisplay()
 
 void WaveformDisplay::paint(juce::Graphics& g)
 {
-    g.fillAll(Constants::Colors::BACKGROUND);
+    auto bounds = getLocalBounds().toFloat();
 
-    g.setColour(Constants::Colors::WAVEFORM);
+    // Draw CRT bezel (inset frame)
+    drawCRTBezel(g, bounds);
 
-    // Simple waveform drawing (placeholder)
+    // Get screen area (inside bezel)
+    auto screenBounds = bounds.reduced(8.0f);
+
+    // Draw CRT screen background
+    g.setColour(Constants::Colors::CRT_BACKGROUND);
+    g.fillRoundedRectangle(screenBounds, 4.0f);
+
+    // Draw grid lines (oscilloscope style)
+    drawGrid(g, screenBounds);
+
+    // Draw the waveform with phosphor glow
     if (displayBuffer.getNumSamples() > 0)
     {
-        juce::Path waveformPath;
-        const int width = getWidth();
-        const int height = getHeight();
-        const float midY = height / 2.0f;
-
-        waveformPath.startNewSubPath(0, midY);
-
-        for (int i = 0; i < width; ++i)
-        {
-            const int sampleIndex = juce::jmap(i, 0, width, 0, displayBuffer.getNumSamples());
-            if (sampleIndex < displayBuffer.getNumSamples())
-            {
-                const float sample = displayBuffer.getSample(0, sampleIndex);
-                const float y = midY - (sample * midY);
-                waveformPath.lineTo(i, y);
-            }
-        }
-
-        g.strokePath(waveformPath, juce::PathStrokeType(2.0f));
+        drawWaveformWithGlow(g, screenBounds);
     }
+
+    // Draw CRT scanline effect
+    drawScanlines(g, screenBounds);
+
+    // Draw screen edge vignette
+    drawVignette(g, screenBounds);
+}
+
+void WaveformDisplay::drawCRTBezel(juce::Graphics& g, juce::Rectangle<float> bounds)
+{
+    // Draw outer bezel (metal frame)
+    g.setColour(Constants::Colors::PANEL_DARK_GRAY);
+    g.fillRoundedRectangle(bounds, 6.0f);
+
+    // Draw inner shadow for depth
+    g.setColour(Constants::Colors::METAL_SHADOW);
+    g.drawRoundedRectangle(bounds.reduced(4.0f), 5.0f, 2.0f);
+
+    // Draw highlight edge
+    g.setColour(Constants::Colors::METAL_HIGHLIGHT.withAlpha(0.3f));
+    juce::Path highlightPath;
+    highlightPath.addRoundedRectangle(bounds.getX(), bounds.getY(),
+                                     bounds.getWidth(), bounds.getHeight() * 0.3f, 6.0f, 6.0f, true, true, false, false);
+    g.fillPath(highlightPath);
+}
+
+void WaveformDisplay::drawGrid(juce::Graphics& g, juce::Rectangle<float> bounds)
+{
+    g.setColour(Constants::Colors::CRT_GRID);
+
+    // Vertical grid lines
+    int numVerticalLines = 10;
+    for (int i = 1; i < numVerticalLines; ++i)
+    {
+        float x = bounds.getX() + (bounds.getWidth() * i / numVerticalLines);
+        g.drawLine(x, bounds.getY(), x, bounds.getBottom(), 0.5f);
+    }
+
+    // Horizontal grid lines
+    int numHorizontalLines = 6;
+    for (int i = 1; i < numHorizontalLines; ++i)
+    {
+        float y = bounds.getY() + (bounds.getHeight() * i / numHorizontalLines);
+        g.drawLine(bounds.getX(), y, bounds.getRight(), y, 0.5f);
+    }
+
+    // Center line (brighter)
+    float centerY = bounds.getCentreY();
+    g.setColour(Constants::Colors::CRT_GRID.brighter(0.5f));
+    g.drawLine(bounds.getX(), centerY, bounds.getRight(), centerY, 1.0f);
+}
+
+void WaveformDisplay::drawWaveformWithGlow(juce::Graphics& g, juce::Rectangle<float> bounds)
+{
+    juce::Path waveformPath;
+    const int width = (int)bounds.getWidth();
+    const int height = (int)bounds.getHeight();
+    const float midY = bounds.getCentreY();
+
+    waveformPath.startNewSubPath(bounds.getX(), midY);
+
+    // Build waveform path
+    for (int x = 0; x < width; ++x)
+    {
+        const int sampleIndex = juce::jmap(x, 0, width, 0, displayBuffer.getNumSamples());
+        if (sampleIndex < displayBuffer.getNumSamples())
+        {
+            const float sample = displayBuffer.getSample(0, sampleIndex);
+            const float y = midY - (sample * height * 0.45f);
+            waveformPath.lineTo(bounds.getX() + x, y);
+        }
+    }
+
+    // Draw outer glow (phosphor bloom effect)
+    for (int i = 3; i > 0; --i)
+    {
+        float alpha = 0.1f / i;
+        float thickness = 6.0f * i;
+        g.setColour(Constants::Colors::CRT_GLOW.withAlpha(alpha));
+        g.strokePath(waveformPath, juce::PathStrokeType(thickness));
+    }
+
+    // Draw main phosphor trace (bright green)
+    g.setColour(Constants::Colors::CRT_PHOSPHOR);
+    g.strokePath(waveformPath, juce::PathStrokeType(2.0f));
+
+    // Draw extra bright core
+    g.setColour(Constants::Colors::CRT_PHOSPHOR.brighter(0.5f));
+    g.strokePath(waveformPath, juce::PathStrokeType(1.0f));
+}
+
+void WaveformDisplay::drawScanlines(juce::Graphics& g, juce::Rectangle<float> bounds)
+{
+    // Draw horizontal scanlines for CRT effect
+    g.setColour(Constants::Colors::METAL_SHADOW.withAlpha(0.15f));
+
+    for (float y = bounds.getY(); y < bounds.getBottom(); y += 3.0f)
+    {
+        g.drawLine(bounds.getX(), y, bounds.getRight(), y, 1.0f);
+    }
+}
+
+void WaveformDisplay::drawVignette(juce::Graphics& g, juce::Rectangle<float> bounds)
+{
+    // Draw edge vignette for CRT curvature effect
+    juce::ColourGradient vignette(
+        juce::Colours::transparentBlack, bounds.getCentreX(), bounds.getCentreY(),
+        Constants::Colors::METAL_SHADOW.withAlpha(0.4f), bounds.getX(), bounds.getY(),
+        true);
+
+    g.setGradientFill(vignette);
+    g.fillRoundedRectangle(bounds, 4.0f);
 }
 
 void WaveformDisplay::resized()

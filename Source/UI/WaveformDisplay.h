@@ -2,7 +2,7 @@
   ==============================================================================
 
     WaveformDisplay.h
-    Real-time waveform visualizer
+    Vintage CRT oscilloscope-style waveform visualizer
 
   ==============================================================================
 */
@@ -23,6 +23,12 @@ public:
     void setBuffer(const juce::AudioBuffer<float>& buffer);
 
 private:
+    void drawCRTBezel(juce::Graphics& g, juce::Rectangle<float> bounds);
+    void drawGrid(juce::Graphics& g, juce::Rectangle<float> bounds);
+    void drawWaveformWithGlow(juce::Graphics& g, juce::Rectangle<float> bounds);
+    void drawScanlines(juce::Graphics& g, juce::Rectangle<float> bounds);
+    void drawVignette(juce::Graphics& g, juce::Rectangle<float> bounds);
+
     juce::AudioBuffer<float> displayBuffer;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WaveformDisplay)

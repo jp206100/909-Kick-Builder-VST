@@ -16,7 +16,7 @@ NineZeroNineAudioProcessorEditor::NineZeroNineAudioProcessorEditor (NineZeroNine
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
     // Set custom LookAndFeel
-    setLookAndFeel(&futuristicLookAndFeel);
+    setLookAndFeel(&vintageLookAndFeel);
 
     // Set plugin size
     setSize (Constants::UI::PLUGIN_WIDTH, Constants::UI::PLUGIN_HEIGHT);
@@ -110,13 +110,112 @@ NineZeroNineAudioProcessorEditor::~NineZeroNineAudioProcessorEditor()
 //==============================================================================
 void NineZeroNineAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    // Fill background with dark color
-    g.fillAll (Constants::Colors::BACKGROUND);
+    auto bounds = getLocalBounds();
 
-    // Draw title
-    g.setColour (Constants::Colors::TEXT_PRIMARY);
-    g.setFont (24.0f);
-    g.drawFittedText ("909 Kick Builder", 0, 10, getWidth(), 30, juce::Justification::centred, 1);
+    // Fill background
+    g.fillAll(Constants::Colors::BACKGROUND);
+
+    // Draw main hardware panel
+    drawHardwarePanel(g, bounds.toFloat());
+
+    // Draw panel screws in corners
+    drawPanelScrews(g, bounds.toFloat());
+
+    // Draw title plate
+    drawTitlePlate(g, bounds.removeFromTop(60).toFloat());
+}
+
+void NineZeroNineAudioProcessorEditor::drawHardwarePanel(juce::Graphics& g, juce::Rectangle<float> bounds)
+{
+    // Main panel with brushed metal gradient
+    juce::ColourGradient metalGradient(
+        Constants::Colors::PANEL_MEDIUM_GRAY, bounds.getCentreX(), bounds.getY(),
+        Constants::Colors::PANEL_DARK_GRAY, bounds.getCentreX(), bounds.getBottom(),
+        false);
+    metalGradient.addColour(0.3, Constants::Colors::PANEL_LIGHT_GRAY);
+
+    g.setGradientFill(metalGradient);
+    g.fillRect(bounds);
+
+    // Add subtle noise texture for brushed metal effect
+    juce::Random random(12345);
+    for (int i = 0; i < 1000; ++i)
+    {
+        float x = random.nextFloat() * bounds.getWidth();
+        float y = random.nextFloat() * bounds.getHeight();
+        float brightness = random.nextFloat() * 0.1f - 0.05f;
+        g.setColour(Constants::Colors::PANEL_MEDIUM_GRAY.brighter(brightness));
+        g.fillRect(x, y, 2.0f, 1.0f);
+    }
+}
+
+void NineZeroNineAudioProcessorEditor::drawPanelScrews(juce::Graphics& g, juce::Rectangle<float> bounds)
+{
+    float screwSize = 12.0f;
+    float margin = 12.0f;
+
+    juce::Point<float> corners[] = {
+        {bounds.getX() + margin, bounds.getY() + margin},
+        {bounds.getRight() - margin - screwSize, bounds.getY() + margin},
+        {bounds.getX() + margin, bounds.getBottom() - margin - screwSize},
+        {bounds.getRight() - margin - screwSize, bounds.getBottom() - margin - screwSize}
+    };
+
+    for (auto corner : corners)
+    {
+        // Screw head shadow
+        g.setColour(Constants::Colors::METAL_SHADOW);
+        g.fillEllipse(corner.x + 1, corner.y + 1, screwSize, screwSize);
+
+        // Screw head body
+        juce::ColourGradient screwGradient(
+            Constants::Colors::SCREW_HEAD.brighter(0.2f), corner.x + screwSize * 0.3f, corner.y + screwSize * 0.3f,
+            Constants::Colors::SCREW_HEAD.darker(0.2f), corner.x + screwSize * 0.7f, corner.y + screwSize * 0.7f,
+            true);
+        g.setGradientFill(screwGradient);
+        g.fillEllipse(corner.x, corner.y, screwSize, screwSize);
+
+        // Phillips head cross
+        g.setColour(Constants::Colors::METAL_SHADOW);
+        float crossSize = screwSize * 0.6f;
+        float crossThickness = 1.5f;
+        juce::Point<float> center(corner.x + screwSize * 0.5f, corner.y + screwSize * 0.5f);
+        g.drawLine(center.x - crossSize * 0.5f, center.y, center.x + crossSize * 0.5f, center.y, crossThickness);
+        g.drawLine(center.x, center.y - crossSize * 0.5f, center.x, center.y + crossSize * 0.5f, crossThickness);
+    }
+}
+
+void NineZeroNineAudioProcessorEditor::drawTitlePlate(juce::Graphics& g, juce::Rectangle<float> bounds)
+{
+    bounds = bounds.reduced(16.0f, 8.0f);
+
+    // Roland-style red accent bar
+    auto accentBar = bounds.removeFromTop(6.0f);
+    g.setColour(Constants::Colors::ROLAND_RED);
+    g.fillRoundedRectangle(accentBar, 2.0f);
+
+    // Add highlight to red bar
+    g.setColour(Constants::Colors::ROLAND_RED_LIGHT);
+    g.fillRoundedRectangle(accentBar.removeFromTop(2.0f), 1.0f);
+
+    bounds.removeFromTop(4.0f);
+
+    // Draw main title with engraved effect
+    juce::String title = "TR-909 KICK BUILDER";
+
+    // Shadow (engraved)
+    g.setColour(Constants::Colors::TEXT_ENGRAVED);
+    g.setFont(juce::Font("Arial", 28.0f, juce::Font::bold));
+    g.drawText(title, bounds.translated(0, 2), juce::Justification::centred);
+
+    // Main text
+    g.setColour(Constants::Colors::TEXT_STENCIL);
+    g.drawText(title, bounds, juce::Justification::centred);
+
+    // Subtitle
+    g.setFont(juce::Font("Arial", 11.0f, juce::Font::plain));
+    g.setColour(Constants::Colors::TEXT_SECONDARY);
+    g.drawText("PROFESSIONAL KICK DRUM SYNTHESIZER", bounds.translated(0, 30), juce::Justification::centred);
 }
 
 void NineZeroNineAudioProcessorEditor::resized()

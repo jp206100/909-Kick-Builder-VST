@@ -35,12 +35,17 @@ private:
     // Timer callback for UI updates
     void timerCallback() override;
 
+    // Hardware panel rendering methods
+    void drawHardwarePanel(juce::Graphics& g, juce::Rectangle<float> bounds);
+    void drawPanelScrews(juce::Graphics& g, juce::Rectangle<float> bounds);
+    void drawTitlePlate(juce::Graphics& g, juce::Rectangle<float> bounds);
+
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     NineZeroNineAudioProcessor& audioProcessor;
 
     // Custom LookAndFeel
-    FuturisticLookAndFeel futuristicLookAndFeel;
+    VintageLookAndFeel vintageLookAndFeel;
 
     // Visual components
     WaveformDisplay waveformDisplay;
