@@ -57,7 +57,7 @@ target_sources(909KickBuilder
         Source/UI/WaveformDisplay.cpp
         Source/UI/SpectrumAnalyzer.cpp
         Source/UI/ADSRDisplay.cpp
-        Source/UI/ModernKnob.cpp
+        Source/UI/VintageKnob.cpp
         Source/UI/LevelMeter.cpp
         Source/UI/PresetBrowser.cpp
         Source/Presets/PresetManager.cpp

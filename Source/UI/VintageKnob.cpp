@@ -1,13 +1,13 @@
 /*
   ==============================================================================
 
-    ModernKnob.cpp
+    VintageKnob.cpp
     Vintage hardware-style 3D skeuomorphic knob implementation
 
   ==============================================================================
 */
 
-#include "ModernKnob.h"
+#include "VintageKnob.h"
 #include "../Utils/Constants.h"
 
 VintageKnob::VintageKnob()

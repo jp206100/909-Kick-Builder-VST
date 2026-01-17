@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    ModernKnob.h
+    VintageKnob.h
     Vintage hardware-style 3D skeuomorphic knob with realistic rendering
 
   ==============================================================================
