@@ -41,7 +41,7 @@ void VintageKnob::paint(juce::Graphics& g)
     {
         auto labelBounds = bounds.removeFromTop(labelHeight);
         g.setColour(Constants::Colors::TEXT_STENCIL);
-        g.setFont(juce::Font("Arial", 11.0f, juce::Font::bold));
+        g.setFont(juce::FontOptions("Arial", 11.0f, juce::Font::bold));
         g.drawText(labelText, labelBounds, juce::Justification::centred);
         bounds.removeFromTop(spacing);
     }
@@ -54,9 +54,11 @@ void VintageKnob::paint(juce::Graphics& g)
     auto knobBounds = bounds.withSizeKeepingCentre(knobSize, knobSize);
 
     // Calculate rotation angle based on value
-    float angle = (float)juce::jmap(getValue(), getMinimum(), getMaximum(),
-                                    getRotaryParameters().startAngleRadians,
-                                    getRotaryParameters().endAngleRadians);
+    float angle = juce::jmap(static_cast<float>(getValue()),
+                            static_cast<float>(getMinimum()),
+                            static_cast<float>(getMaximum()),
+                            getRotaryParameters().startAngleRadians,
+                            getRotaryParameters().endAngleRadians);
 
     // Draw the knob components
     drawKnobBody(g, knobBounds, angle);
@@ -72,6 +74,7 @@ void VintageKnob::paint(juce::Graphics& g)
 
 void VintageKnob::drawKnobBody(juce::Graphics& g, juce::Rectangle<float> bounds, float angle)
 {
+    (void)angle; // Unused - knob body doesn't rotate
     auto centre = bounds.getCentre();
     float radius = bounds.getWidth() * 0.42f;
 
@@ -183,7 +186,7 @@ void VintageKnob::drawValueLabel(juce::Graphics& g, juce::Rectangle<float> bound
 
     // Draw value text
     g.setColour(Constants::Colors::TEXT_PRIMARY);
-    g.setFont(juce::Font("Courier New", 12.0f, juce::Font::bold));
+    g.setFont(juce::FontOptions("Courier New", 12.0f, juce::Font::bold));
     g.drawText(valueText, bounds, juce::Justification::centred);
 }
 
