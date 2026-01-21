@@ -46,7 +46,7 @@ void ADSRDisplay::paint(juce::Graphics& g)
 
 void ADSRDisplay::drawGrid(juce::Graphics& g, juce::Rectangle<float> bounds)
 {
-    g.setColour(Constants::Colors::GRID_LINE.withAlpha(0.15f));
+    g.setColour(Constants::Colors::CRT_GRID.withAlpha(0.15f));
 
     // Horizontal grid lines
     for (int i = 1; i < 4; ++i)
