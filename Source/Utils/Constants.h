@@ -155,6 +155,7 @@ namespace Constants
         const juce::Colour LED_ON { 0xFFFF0000 };               // Bright red when on
         const juce::Colour LED_GREEN_OFF { 0xFF003300 };        // Dark green when off
         const juce::Colour LED_GREEN_ON { 0xFF00FF00 };         // Bright green when on
+        const juce::Colour LED_AMBER { 0xFFFFAA00 };            // Amber/orange warning
 
         // Text and labels (vintage stencil style)
         const juce::Colour TEXT_PRIMARY { 0xFFE8E8E8 };         // Off-white text
