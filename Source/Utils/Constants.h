@@ -79,7 +79,7 @@ namespace Constants
         // Clip to Zero
         constexpr float CLIP_AMOUNT_MIN = 0.0f;     // %
         constexpr float CLIP_AMOUNT_MAX = 100.0f;   // %
-        constexpr float CLIP_AMOUNT_DEFAULT = 0.0f; // %
+        constexpr float CLIP_AMOUNT_DEFAULT = 40.0f; // % (moderate clipping for punch)
 
         // Saturation
         constexpr float SATURATION_DRIVE_MIN = 0.0f;    // %

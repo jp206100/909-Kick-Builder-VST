@@ -269,9 +269,15 @@ void NineZeroNineAudioProcessorEditor::resized()
 
     // Clip to Zero section
     auto clipArea = area.removeFromTop(knobSize + 40);
-    clipEnabledButton.setBounds(clipArea.removeFromLeft(150).removeFromTop(30));
-    clipAmountLabel.setBounds(clipArea.removeFromTop(20).removeFromLeft(150));
-    clipAmountSlider.setBounds(clipArea.withSizeKeepingCentre(knobSize, knobSize));
+
+    // Button on the left
+    auto buttonArea = clipArea.removeFromLeft(150);
+    clipEnabledButton.setBounds(buttonArea.removeFromTop(30));
+
+    // Label and knob centered in remaining space
+    auto knobArea = clipArea.withSizeKeepingCentre(knobSize + 40, knobSize + 40);
+    clipAmountLabel.setBounds(knobArea.removeFromTop(20));
+    clipAmountSlider.setBounds(knobArea.withSizeKeepingCentre(knobSize, knobSize));
 
     area.removeFromTop(margin);
 
