@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.22)
 
+# Set macOS deployment target BEFORE project() to avoid SDK version being used
+set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0" CACHE STRING "Minimum macOS version" FORCE)
+
 project(909_KICK_BUILDER VERSION 1.0.0)
 
 # Set C++ standard
