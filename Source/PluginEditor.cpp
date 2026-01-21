@@ -211,11 +211,6 @@ void NineZeroNineAudioProcessorEditor::drawTitlePlate(juce::Graphics& g, juce::R
     // Main text
     g.setColour(Constants::Colors::TEXT_STENCIL);
     g.drawText(title, bounds, juce::Justification::centred);
-
-    // Subtitle
-    g.setFont(juce::Font("Arial", 11.0f, juce::Font::plain));
-    g.setColour(Constants::Colors::TEXT_SECONDARY);
-    g.drawText("PROFESSIONAL KICK DRUM SYNTHESIZER", bounds.translated(0, 30), juce::Justification::centred);
 }
 
 void NineZeroNineAudioProcessorEditor::resized()
@@ -293,6 +288,17 @@ void NineZeroNineAudioProcessorEditor::timerCallback()
     tempBuffer.setSize(2, 4096);
     audioProcessor.getLatestWaveform(tempBuffer);
     waveformDisplay.setBuffer(tempBuffer);
+
+    // Update waveform display clip visualization
+    waveformDisplay.setClipEnabled(audioProcessor.getAPVTS().getRawParameterValue("clip_enabled")->load() > 0.5f);
+    waveformDisplay.setClipAmount(audioProcessor.getAPVTS().getRawParameterValue("clip_amount")->load());
+    waveformDisplay.setClipGainReduction(audioProcessor.getClipGainReduction());
+
+    // Update ADSR display with current parameter values
+    adsrDisplay.setAttack(audioProcessor.getAPVTS().getRawParameterValue("attack")->load());
+    adsrDisplay.setDecay(audioProcessor.getAPVTS().getRawParameterValue("decay")->load());
+    adsrDisplay.setSustain(audioProcessor.getAPVTS().getRawParameterValue("sustain")->load());
+    adsrDisplay.setRelease(audioProcessor.getAPVTS().getRawParameterValue("release")->load());
 
     // Update metering, etc.
     repaint();

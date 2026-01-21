@@ -42,6 +42,12 @@ void WaveformDisplay::paint(juce::Graphics& g)
         drawWaveformWithGlow(g, screenBounds);
     }
 
+    // Draw clip threshold if enabled
+    if (clipEnabled && clipAmount > 0.0f)
+    {
+        drawClipThreshold(g, screenBounds);
+    }
+
     // Draw CRT scanline effect
     drawScanlines(g, screenBounds);
 
@@ -162,5 +168,64 @@ void WaveformDisplay::resized()
 void WaveformDisplay::setBuffer(const juce::AudioBuffer<float>& buffer)
 {
     displayBuffer.makeCopyOf(buffer, true);
+    repaint();
+}
+
+void WaveformDisplay::drawClipThreshold(juce::Graphics& g, juce::Rectangle<float> bounds)
+{
+    // Calculate threshold level from clip amount (0-100% maps to 0dB to -12dB)
+    const float thresholdDb = juce::jmap(clipAmount, 0.0f, 100.0f, 0.0f, -12.0f);
+    const float threshold = juce::Decibels::decibelsToGain(thresholdDb);
+
+    const float midY = bounds.getCentreY();
+    const float height = bounds.getHeight();
+
+    // Calculate Y positions for positive and negative threshold lines
+    const float thresholdYPos = midY - (threshold * height * 0.45f);
+    const float thresholdYNeg = midY + (threshold * height * 0.45f);
+
+    // Choose color based on whether clipping is occurring
+    juce::Colour thresholdColor = clipGainReduction > 0.001f
+        ? Constants::Colors::ROLAND_RED         // Red when clipping
+        : Constants::Colors::LED_AMBER;          // Amber when enabled but not clipping
+
+    // Draw threshold lines with glow
+    g.setColour(thresholdColor.withAlpha(0.3f));
+    g.drawLine(bounds.getX(), thresholdYPos, bounds.getRight(), thresholdYPos, 3.0f);
+    g.drawLine(bounds.getX(), thresholdYNeg, bounds.getRight(), thresholdYNeg, 3.0f);
+
+    g.setColour(thresholdColor);
+    g.drawLine(bounds.getX(), thresholdYPos, bounds.getRight(), thresholdYPos, 1.5f);
+    g.drawLine(bounds.getX(), thresholdYNeg, bounds.getRight(), thresholdYNeg, 1.5f);
+
+    // Draw "CLIP" label when clipping is occurring
+    if (clipGainReduction > 0.001f)
+    {
+        g.setColour(Constants::Colors::ROLAND_RED);
+        g.setFont(juce::FontOptions(10.0f, juce::Font::bold));
+        g.drawText("CLIP", bounds.removeFromTop(15).reduced(4.0f), juce::Justification::topRight);
+
+        // Draw gain reduction amount
+        juce::String grText = juce::String(clipGainReduction * 100.0f, 1) + "%";
+        g.setFont(juce::FontOptions(9.0f, juce::Font::plain));
+        g.drawText(grText, bounds.removeFromTop(12).reduced(4.0f), juce::Justification::topRight);
+    }
+}
+
+void WaveformDisplay::setClipEnabled(bool enabled)
+{
+    clipEnabled = enabled;
+    repaint();
+}
+
+void WaveformDisplay::setClipAmount(float amount)
+{
+    clipAmount = amount;
+    repaint();
+}
+
+void WaveformDisplay::setClipGainReduction(float gainReductionDb)
+{
+    clipGainReduction = gainReductionDb;
     repaint();
 }
